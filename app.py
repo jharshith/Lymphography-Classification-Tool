@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 import pickle
 import numpy as np
 import pandas as pd
@@ -13,12 +13,25 @@ with open('lymphography_model.pkl', 'rb') as model_file:
 with open('scaler.pkl', 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
 
-# Define the route for the default URL, which loads the form
+# Define the class mapping
+class_mapping = {
+    1: "Normal",
+    2: "Metastases",
+    3: "Malign lymph",
+    4: "Fibrosis"
+}
+
+# Route for the landing page
 @app.route('/')
-def form():
+def landing():
     return render_template('index.html')
 
-# Define the route for the form submission
+# Route for the form page
+@app.route('/form')
+def form_page():
+    return render_template('form.html')
+
+# Route for form submission and prediction
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get the data from the form
@@ -31,8 +44,9 @@ def predict():
     
     # Make prediction
     prediction = model.predict(data_scaled)
+    prediction_class = class_mapping[prediction[0]]
     
-    return render_template('index.html', prediction=prediction[0])
+    return render_template('form.html', prediction=prediction_class)
 
 if __name__ == '__main__':
     app.run(debug=True)

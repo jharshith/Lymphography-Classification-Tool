@@ -1,5 +1,3 @@
-# scripts/data_visualization.py
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -23,16 +21,21 @@ plt.figure(figsize=(12, 5))
 # Histogram
 plt.subplot(121)
 sns.histplot(data["lymphatics"], color='r')
-plt.title('Histogram of Lymphatics')
+plt.title('Univariate: Histogram of Lymphatics')
 
-# Kernel Density Estimate
+#Kernel Density Estimate
 plt.subplot(122)
 sns.kdeplot(data["lymphatics"], color='b', fill=True)
-plt.title('KDE of Lymphatics')
+plt.title('Univariate: KDE of Lymphatics')
 
 plt.tight_layout()
 plt.show()
 
-summary = data.describe()
-summary.to_csv('./data_summary.csv')
-print("Summary statistics saved to data_summary.csv")
+# Bivariate Analysis
+plt.figure(figsize=(12, 5))
+
+# Multivariate Analysis
+# Pair Plot
+sns.pairplot(data, hue="class", palette="viridis")
+plt.suptitle('Multivariate: Pair Plot', y=1.02)
+plt.show()
