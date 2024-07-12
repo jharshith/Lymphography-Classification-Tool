@@ -10,7 +10,7 @@
     <div class="container">
         <h1 class="title">Lymphography Classifier Form</h1>
         <div class="form-container" id="form-container">
-            <form action="/predict" method="post" onsubmit="showPrediction(event)">
+            <form id="lymphography-form" action="/predict" method="post">
                 {% set fields = [
                     ('lymphatics', 'Lymphatics (normal(1), arched(2), deformed(3), displaced(4))'),
                     ('block_of_affere', 'Block of afferent (no(1), yes(2))'),
@@ -39,17 +39,27 @@
             </form>
         </div>
         <div class="prediction-container" id="prediction-container" style="display: none;">
-            {% if prediction %}
-                <h2 class="prediction">Prediction: {{ prediction }}</h2>
-            {% endif %}
+            <h2 class="prediction" id="prediction-result"></h2>
         </div>
     </div>
     <script>
-        function showPrediction(event) {
+        document.getElementById('lymphography-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            document.getElementById('form-container').style.display = 'none';
-            document.getElementById('prediction-container').style.display = 'block';
-        }
+
+            var formData = new FormData(this);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('prediction-container').style.display = 'block';
+                document.getElementById('prediction-result').textContent = 'Prediction: ' + data.prediction;
+            })
+            .catch(error => console.error('Error:', error));
+        });
     </script>
 </body>
 </html>

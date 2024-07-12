@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, jsonify
 import pickle
 import numpy as np
 import pandas as pd
@@ -46,7 +46,7 @@ def predict():
     prediction = model.predict(data_scaled)
     prediction_class = class_mapping[prediction[0]]
     
-    return render_template('form.html', prediction=prediction_class)
+    return jsonify(prediction=prediction_class)
 
 if __name__ == '__main__':
     app.run(debug=True)
